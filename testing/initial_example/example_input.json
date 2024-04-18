@@ -1,6 +1,7 @@
-{
+{   
     "simset": {
-        "@endDate": "20-11-2023"
+        "@startDate": "05-09-2023",
+        "@endDate": "06-09-2023"
     },
     "common": {
         "CO2dosing": {
