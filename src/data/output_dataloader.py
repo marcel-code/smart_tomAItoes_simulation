@@ -12,110 +12,110 @@ class OutputData(BaseDataset):
         "responsecode": 0,
         "responsemsg": "ok",
         "data": {
-            "DateTime": {
+            "DateTime": {                       # DateTime in Excel date format
                 "unit": "OLE Automation date",
                 "data": [45174.041667, 45174.083333]
             }, 
-            "comp1.Air.T": {
+            "comp1.Air.T": {                    # inside greenhouse air temperature
                 "unit": "oC", "data": [18.0, 19.28 ]
             }, 
-            "comp1.Air.RH": {
+            "comp1.Air.RH": {                   # inside greenhouse humidity (0-100)
                 "unit": "%", 
                 "data": [72.1, 68.7]
             }, 
-            "comp1.Air.ppm": {
+            "comp1.Air.ppm": {                  # inside greenhouse CO2 concentration
                 "unit": "ppm", 
                 "data": [400.0, 400.0]
             }, 
-            "common.Iglob.Value": {
+            "common.Iglob.Value": {             # outside greenhouse solar radiation
                 "unit": "W/m2", 
                 "data": [0.0, 0.0]
             }, 
-            "common.Tout.Value": {
+            "common.Tout.Value": {              # outside greenhouse air temperature
                 "unit": "oC", 
                 "data": [16.8, 16.4]
             }, 
-            "common.RHout.Value": {
+            "common.RHout.Value": {             # outside greenhouse humidity (0-100)
                 "unit": "%", 
                 "data": [86.4, 87.3]
             }, 
-            "common.Windsp.Value": {
+            "common.Windsp.Value": {            # outside greenhouse wind speed
                 "unit": "m/s", 
                 "data": [0.8, 1.3]
             }, 
-            "comp1.PARsensor.Above": {
+            "comp1.PARsensor.Above": {          # light intensity (= photon flux density) just above the crop inside greenhouse
                 "unit": "umol/m2/s", 
                 "data": [0.0, 0.0]
             }, 
-            "comp1.TPipe1.Value": {
+            "comp1.TPipe1.Value": {             # average heating pipe temperature inside greenhouse
                 "unit": "oC", 
                 "data": [43.393038625547376, 37.263411730190654,]
             }, 
-            "comp1.ConPipes.TSupPipe1": {
+            "comp1.ConPipes.TSupPipe1": {       # supply pipe temperature inside greenhouse
                 "unit": "oC", 
                 "data": [47.5, 38.5]
             }, 
-            "comp1.PConPipe1.Value": {
+            "comp1.PConPipe1.Value": {          # heating power applied to the heating system inside greenhouse
                 "unit": "W/m2", 
                 "data": [108.3, 27.2]
             }, 
-            "comp1.ConWin.WinLee": {
+            "comp1.ConWin.WinLee": {            # vent/window-openings on lee side of greenhouse
                 "unit": "%", 
                 "data": [0.0, 0.0]
             }, 
-            "comp1.ConWin.WinWnd": {
+            "comp1.ConWin.WinWnd": {            # vent/window-openings on wind side of greenhouse
                 "unit": "%", 
                 "data": [0.0, 0.0]
             }, 
-            "comp1.Setpoints.SpHeat": {
+            "comp1.Setpoints.SpHeat": {         # heating setpoint used in simulation
                 "unit": "oC", 
                 "data": [17.5, 18.5]
             }, 
-            "comp1.Setpoints.SpVent": {
+            "comp1.Setpoints.SpVent": {         # ventilation setpoint used in simulation
                 "unit": "oC", 
                 "data": [19.5, 20.5]
             }, 
-            "comp1.Scr1.Pos": {
+            "comp1.Scr1.Pos": {                 # position of transparent screen (transmission of 70%; upper most screen) on greenhouse roof
                 "unit": "0-1", 
                 "data": [0.924, 1.0]
             }, 
-            "comp1.Scr2.Pos": {
+            "comp1.Scr2.Pos": {                 # position of light blocking screen (transmission of less than 1%; second screen) on greenhouse roof
                 "unit": "0-1", 
                 "data": [0.908, 0.997]
             }, 
-            "comp1.Lmp1.ElecUse": {
+            "comp1.Lmp1.ElecUse": {             # electrical power used to power LEDs for inside greenhouse illumination
                 "unit": "W/m2", 
                 "data": [0.0, 0.0]
             }, 
-            "comp1.McPureAir.Value": {
+            "comp1.McPureAir.Value": {          # CO2 dosing rate inside greenhouse
                 "unit": "kg/m2/s", 
                 "data": [0.0, 0.0]
             }, 
-            "comp1.Setpoints.SpCO2": {
+            "comp1.Setpoints.SpCO2": {          # CO2 dosing setpoint used in simulation
                 "unit": "ppm", 
                 "data": [310.0, 300.0]
             }, 
-            "comp1.Growth.FruitFreshweight": {
+            "comp1.Growth.FruitFreshweight": {  # total fruit fresh weight in grams per plant
                 "unit": "gram plant-1", 
                 "data": [0.0, 0.0]
             }, 
-            "comp1.Growth.DVSfruit": {
+            "comp1.Growth.DVSfruit": {          # fruit development stage (raction of fruits that is ripe, 0 = no ripe fruits, 1 = all fruits are ripe, sellable for values higher equal 0.5 when value is not zero)
                 "unit": "0-1", 
                 "data": [0.0, 0.0]
             }, 
-            "comp1.Growth.DryMatterFract": {
+            "comp1.Growth.DryMatterFract": {    # dry matter content (DMC) of the fruits (indicator for tastefulness, ripeness, ...)
                 "unit": "0-1", 
                 "data": [0.0, 0.0]
             }, 
-            "comp1.Growth.CropAbs": {
+            "comp1.Growth.CropAbs": {           # fraction of PAR light absorbed by crop
                 "unit": "0-1", 
                 "data": [0.0, 0.0]
             }, 
-            "comp1.Growth.PlantDensity": {
+            "comp1.Growth.PlantDensity": {      # number of plants per m² used in simulation
                 "unit": "plants m-2", 
                 "data": [56.0, 56.0]
             }, 
-            "common.ElecPrice.PeakHour": {
+            "common.ElecPrice.PeakHour": {      # True (1) if it is (an expensive) peak hour
                 "unit": "bool", 
                 "data": [0.0, 0.0]
             }
@@ -124,36 +124,36 @@ class OutputData(BaseDataset):
             "economics": {
                 "info": {
                     "unit": "euro/m2", 
-                    "fractionOfYear": 0.003, 
-                    "averageDensity": 56.0
+                    "fractionOfYear": 0.003,    # of greenhouse occupation (here probably between 0.14 and 0.20)
+                    "averageDensity": 56.0      # average number of plants per m² used in simulation
                 }, 
                 "fixedCosts": {
                     "objects": {
-                        "comp1.Greenhouse": 0.041, 
-                        "comp1.Lmp1": 0.029, 
-                        "comp1.Scr1": 0.003, 
-                        "comp1.Scr2": 0.003, 
-                        "comp1.ConCO2": 0.004, 
-                        "spacingSystem": 0.0
+                        "comp1.Greenhouse": 0.041,  # fixed costs for greenhouse occupation
+                        "comp1.Lmp1": 0.029,        # fixed costs for depreciation and maintenance of lamps
+                        "comp1.Scr1": 0.003,        # fixed costs for depreciation and maintenance of screen 1
+                        "comp1.Scr2": 0.003,        # fixed costs for depreciation and maintenance of screen 2
+                        "comp1.ConCO2": 0.004,      # fixed costs for CO2 dosing system
+                        "spacingSystem": 0.0        # fixed costs for level of sophistication of the spacing system
                     }, 
-                    "total": 0.079
+                    "total": 0.079          # total fixed costs
                 }, 
                 "variableCosts": {
                     "objects": {
-                        "gas": 0.044, 
-                        "elec": 0.001, 
-                        "CO2": 0.029, 
-                        "plants": 42.0
+                        "gas": 0.044,       # variable costs for heating
+                        "elec": 0.001,      # variable costs for electricity
+                        "CO2": 0.029,       # variable costs for CO2 dosing
+                        "plants": 42.0      # variable costs for buying plants
                     }, 
-                    "total": 42.074
+                    "total": 42.074         # total variable costs
                 }, 
                 "gains": {
                     "objects": {
-                        "product": 0.0
+                        "product": 0.0      # gains for selling potted dwarf tomatoes
                     }, 
-                    "total": 0.0
+                    "total": 0.0            # total gains
                 }, 
-                "balance": -42.154
+                "balance": -42.154          # net profit
             }
         }, 
         "usage": "0% of quotum used"

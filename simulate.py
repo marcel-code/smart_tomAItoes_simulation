@@ -5,16 +5,14 @@ from pathlib import Path
 
 ## TODO SECTION
 
-# TOOD invent yampl file to configure the simulation
+# TODO delete comments here in __name__ == "__main__"
+# TOOD invent yaml file to configure the simulation
 # TODO invent logger to track the simulation
 # TODO Benutze Infos aus Modellen aus PDF dazu, genauere Vorhersagen (bspw. des Wetters) zu treffen, um die Control parameter besser vorgeben zu können. Erstelle entsprechende Modelle / Networks.
 
 ## METHODS SECTION
 
-def set_input_variables():
-    pass
-
-def get_output_variables():
+def method_1():
     pass
 
 ## MAIN SECTION
@@ -25,21 +23,21 @@ if __name__ == "__main__":
     #parser = argparse.ArgumentParser()
     #parser.add_argument("dummy")
     #args = parser.parse_intermixed_args()
-    
+
     ########################################################
 
     # Sensors
 
     # weather station (measures outside greenhouse conditions)
     # common.Iglob.Value # solar radiation
-    # common.Tout.Value # outside air temperature
-    # common.RHout.Value # humidity
-    # common.Windsp.Value # wind speed
+    # common.Tout.Value # outside greenhouse air temperature
+    # common.RHout.Value # outside greenhouse humidity
+    # common.Windsp.Value # outside greenhouse wind speed
 
     # measuring station (measures inside greenhouse conditions)
-    # comp1.Air.T # air temperature
-    # comp1.Air.RH # relative humidity of the air
-    # comp1.Air.ppm # CO2 concentration
+    # comp1.Air.T # inside greenhouse air temperature
+    # comp1.Air.RH # inside greenhouse relative humidity
+    # comp1.Air.ppm # inside greenhouse CO2 concentration
 
     # PAR sensor
     # comp1.PARsensor.Above # photon flux density just above the crop in µmol/(m² s)
@@ -62,7 +60,7 @@ if __name__ == "__main__":
     # comp1.Scr2.Pos # position of light blocking screen (transmission of less than 1%)
 
     # illumination (LEDs)
-    # comp1.Lmp1.ElecUse # electrical power used
+    # comp1.Lmp1.ElecUse # electrical power used to power LEDs for inside greenhouse illumination
 
     # CO2 supply
     # comp1.McPureAir.Value # CO2 supply rate in kg/(m² s)
@@ -124,7 +122,7 @@ if __name__ == "__main__":
     # comp1.illumination.lmp1.@hoursLight # defines the maximum number of running hours of the lamp
     # comp1.illumination.lmp1.@endTime # defines at which time the lamps are switched off
     # comp1.illumination.lmp1.@maxIglob # criterion for the outside radiation above which the lamps are switched off
-    # comp1.illumination.lmp1.@maxPARsum #  prevent lamps switching on in the afternoon after a sunny day (this can be switched off by providing a high value)
+    # comp1.illumination.lmp1.@maxPARsum # prevent lamps switching on in the afternoon after a sunny day (this can be switched off by providing a high value)
 
     ########################################################
 
