@@ -1,12 +1,18 @@
 import json
 import os
 import yaml
+import time
+from pathlib import Path
 
 import requests
 
-from src.settings import root, TESTING_PATH
+from src.settings import root, TESTING_PATH, DATA_PATH
 from src.data.input_dataloader import InputData
 from src.data.output_dataloader import OutputData
+
+## TODO SECTION
+
+# TODO find a good simulaiton duration / end date
 
 ## MAIN SECTION
 
@@ -46,7 +52,7 @@ if __name__ == "__main__":
         # extract data
         response_text = response.text
         response_dict = response.json()
-
+        
         #print(json.loads(response.text))
 
         # print out the response
@@ -73,32 +79,34 @@ if __name__ == "__main__":
 
         # Test output_dataloader
 
-        #NewResponse = OutputData.from_response(response)
-        #filename = os.path.join(TESTING_PATH, 'initial_example', 'example_response.json')
-        #NewResponse = OutputData.from_json(filename)
-        #filename = os.path.join(TESTING_PATH, 'initial_example', 'example_response.yaml')
-        #NewResponse = OutputData.from_yaml(filename)
-        #print(NewResponse.data_dict)
+        NewResponse = OutputData.from_response(response)
+        filename = os.path.join(TESTING_PATH, 'initial_example', 'example_response.json')
+        NewResponse = OutputData.from_json(filename)
+        filename = os.path.join(TESTING_PATH, 'initial_example', 'example_response.yaml')
+        NewResponse = OutputData.from_yaml(filename)
+        print(11,filename)
+        print(NewResponse.data_dict)
+        
 
-        #filename = os.path.join(TESTING_PATH, 'initial_example', 'example_response_write.json')
-        #NewResponse.write_json(filename)
-        #filename = os.path.join(TESTING_PATH, 'initial_example', 'example_response_write.yaml')
-        #NewResponse.write_yaml(filename)
+        filename = os.path.join(TESTING_PATH, 'initial_example', 'example_response_write.json')
+        NewResponse.write_json(filename)
+        filename = os.path.join(TESTING_PATH, 'initial_example', 'example_response_write.yaml')
+        NewResponse.write_yaml(filename)
         
         ##############################################
 
         # Test input_dataloader
 
-        #filename = os.path.join(TESTING_PATH, 'initial_example', 'example_input.json')
-        #NewInput = InputData.from_json(filename)
-        #filename = os.path.join(TESTING_PATH, 'initial_example', 'example_input.yaml')
-        #NewInput = InputData.from_yaml(filename)
-        #print(NewInput.data_dict)
+        filename = os.path.join(TESTING_PATH, 'initial_example', 'example_input.json')
+        NewInput = InputData.from_json(filename)
+        filename = os.path.join(TESTING_PATH, 'initial_example', 'example_input.yaml')
+        NewInput = InputData.from_yaml(filename)
+        print(NewInput.data_dict)
         #print(type(NewInput.data_dict["comp1"]["screens"]["scr1"]["@enabled"]))
 
-        #filename = os.path.join(TESTING_PATH, 'initial_example', 'example_input_write.json')
-        #NewInput.write_json(filename)
-        #filename = os.path.join(TESTING_PATH, 'initial_example', 'example_input_write.yaml')
-        #NewInput.write_yaml(filename)
+        filename = os.path.join(TESTING_PATH, 'initial_example', 'example_input_write.json')
+        NewInput.write_json(filename)
+        filename = os.path.join(TESTING_PATH, 'initial_example', 'example_input_write.yaml')
+        NewInput.write_yaml(filename)
 
         ##############################################

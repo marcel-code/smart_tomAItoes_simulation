@@ -1,5 +1,6 @@
 import json
 import yaml
+from pathlib import Path
 
 from .base_dataset import BaseDataset
 
@@ -119,6 +120,14 @@ class InputData(BaseDataset):
     }
 
     data_str = json.dumps(data_dict)
+
+    @classmethod
+    def _init(cls):
+        """
+            Initialize input data object with default values.
+        """
+        return cls(cls.data_dict, 
+                   cls.data_str)
     
     @classmethod
     def from_json(cls, filepath):
@@ -135,7 +144,7 @@ class InputData(BaseDataset):
         """
             Load data from a yaml file.
         """
-        data_dict = yaml.safe_load(filepath)
+        data_dict = yaml.safe_load(Path(filepath).read_text())
         return cls(data_dict, 
                    json.dumps(data_dict))
     
@@ -144,7 +153,7 @@ class InputData(BaseDataset):
             Write data in a JSON file.
         """
         with open(filepath, 'w') as file:
-            json.dump(self.data_dict, file)
+            json.dump(self.data_dict, file, indent=4)
     
     def write_yaml(self, filepath):
         """
