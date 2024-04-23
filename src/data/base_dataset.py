@@ -14,6 +14,10 @@ class BaseDataset(metaclass=ABCMeta):
         write_json(self, filepath): write the data in a json file
         
         write_yaml(self, filepath): write the data in a yaml file
+
+        get_data_dict(self): return the data as a dictionary
+
+        get_data_str(self): return the data as a string
     """
 
     def __init__(self, data_dict, data_str):
@@ -39,6 +43,16 @@ class BaseDataset(metaclass=ABCMeta):
     
     @abstractmethod
     def write_yaml(self, filepath):
+        """To be implemented by the child class."""
+        raise NotImplementedError
+    
+    @abstractmethod
+    def get_data_dict(self):
+        """To be implemented by the child class."""
+        raise NotImplementedError
+    
+    @abstractmethod
+    def get_data_str(self):
         """To be implemented by the child class."""
         raise NotImplementedError
     

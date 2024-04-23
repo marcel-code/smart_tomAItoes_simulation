@@ -159,8 +159,6 @@ class OutputData(BaseDataset):
         }, 
         "usage": "0% of quotum used"
     }
-
-    data_str = json.dumps(data_dict)
     
     @classmethod
     def from_response(cls, response):
@@ -202,3 +200,16 @@ class OutputData(BaseDataset):
         """
         with open(filepath, 'w') as file:
             yaml.dump(self.data_dict, file, default_flow_style=False)
+
+    def get_data_dict(self):
+        """
+            Return the data as a dictionary.
+        """
+        return self.data_dict
+    
+    def get_data_str(self):
+        """
+            Return the data as a string.
+        """
+        return json.dumps(self.data_dict)
+    
