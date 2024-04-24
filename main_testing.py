@@ -1,9 +1,12 @@
 import json
 import os
 import yaml
+import xlrd
 import time
+from datetime import datetime
 from pathlib import Path
 
+import matplotlib.pyplot as plt
 import requests
 
 from src.settings import root, TESTING_PATH, DATA_PATH
@@ -13,6 +16,7 @@ from src.data.output_dataloader import OutputData
 ## TODO SECTION
 
 # TODO find a good simulaiton duration / end date
+# TODO write postprocessing script
 
 ## MAIN SECTION
 
@@ -33,10 +37,13 @@ if __name__ == "__main__":
     key_B = 'SmartToms-B-gl4d-1cam' # key to simulator B
     key = key_A
 
-    # select example
-    initial_example = True
+    # select task
+    initial_example_and_data_handling = False
+    extract_net_profits_to_dictionary = False
+    extract_simulation_duration_to_dictionary = False
+    plot_net_profits_over_simulation_duration = False
 
-    if initial_example:
+    if initial_example_and_data_handling:
 
         # read input json
         # param string = input string
@@ -110,4 +117,132 @@ if __name__ == "__main__":
         #NewInput.write_yaml(filename)
 
         ##############################################
+    
+    if extract_net_profits_to_dictionary:
         
+        # define used folder
+        folder = '20240422_simulator_A_generated'
+
+        # initialize dictionary place holder
+        timestampNetProfitDict = {}
+
+        # list of all filenames in folder
+        folder_path = os.path.join(DATA_PATH, folder)
+        filenames = os.listdir(folder_path)
+
+        # list of all filenames of output files in folder
+        output_files = [filename for filename in filenames if 'output' in filename]
+
+        for output_file in output_files:
+            
+            # extray dictionary key from filename
+            output_file_key = output_file.replace('_simulator_A_output', '')
+            output_file_key_final = output_file_key.replace('.json', '')
+
+            # read output json
+            output_filename = os.path.join(DATA_PATH, folder, output_file)
+            NewOutput = OutputData.from_json(output_filename)
+
+            # save net profit to dictionary
+            timestampNetProfitDict[output_file_key_final] = NewOutput.data_dict['stats']['economics']['balance']
+
+        # save dictionary as json
+        filename = os.path.join(DATA_PATH, folder, output_file_key_final+'_timestamp_and_netProfit.json')
+        with open(filename, 'w') as file:
+            json.dump(timestampNetProfitDict, file, indent=4)
+
+        # TODO anschließend muss noch der simulations-index im geschriebenen dictionary file handisch angepasst werden. Das sollte gefixt werden.
+
+    if extract_simulation_duration_to_dictionary:
+        
+        # define used folder
+        #folder = '20240422_simulator_A_generated'
+        #folder = '20240423_simulator_B_generated'
+        folder = '20240424_simulator_A_generated'
+
+        # initialize dictionary place holder
+        timestampSimulationDurationDict = {}
+
+        # list of all filenames in folder
+        folder_path = os.path.join(DATA_PATH, folder)
+        filenames = os.listdir(folder_path)
+
+        # list of all filenames of output files in folder
+        output_files = [filename for filename in filenames if 'output' in filename]
+
+        for output_file in output_files:
+            
+            # extray dictionary key from filename
+            output_file_key = output_file.replace('_simulator_A_output', '')
+            output_file_key_final = output_file_key.replace('.json', '')
+
+            # read output json
+            output_filename = os.path.join(DATA_PATH, folder, output_file)
+            NewOutput = OutputData.from_json(output_filename)
+
+            # extract start and end date from output            
+            start_excel_datestamp = NewOutput.data_dict['data']['DateTime']['data'][0]
+            end_excel_datestamp = NewOutput.data_dict['data']['DateTime']['data'][-1]
+
+            # convert excel datestamp to datetime
+            start_datetime = xlrd.xldate.xldate_as_datetime(start_excel_datestamp, 0)
+            end_datetime = xlrd.xldate.xldate_as_datetime(end_excel_datestamp, 0)
+
+            # calculate simulation duration in days
+            simulation_duration = (end_datetime-start_datetime).days
+
+            # save net profit to dictionary
+            timestampSimulationDurationDict[output_file_key_final] = simulation_duration
+
+        # save dictionary as json
+        filename = os.path.join(DATA_PATH, folder, output_file_key_final+'_timestamp_and_simulationDuration.json')
+        with open(filename, 'w') as file:
+            json.dump(timestampSimulationDurationDict, file, indent=4)
+
+        # TODO anschließend muss noch der simulations-index im geschriebenen dictionary file handisch angepasst werden. Das sollte gefixt werden.
+
+
+    if plot_net_profits_over_simulation_duration:
+        
+        # all investigated folders
+        folders = ['20240422_simulator_A_generated', 
+                   '20240423_simulator_B_generated', 
+                   '20240424_simulator_A_generated']
+        
+        # initialize data dictionary
+        dataDict = {}
+
+        # for all folders
+        for folder in folders:
+
+            # list of all filenames in folder
+            folder_path = os.path.join(DATA_PATH, folder)
+            filenames = os.listdir(folder_path)
+
+            # filename of json file with net profits and simulation durations
+            timestamp_and_netProfit_filename = [filename for filename in filenames if 'timestamp_and_netProfit' in filename][0]
+            timestamp_and_simulationDuration_filename = [filename for filename in filenames if 'timestamp_and_simulationDuration' in filename][0]
+
+            # read dictionary from json with net profits
+            filename = os.path.join(DATA_PATH, folder, timestamp_and_netProfit_filename)
+            with open(filename, 'r') as file:
+                timestampNetProfitDict = json.load(file)
+            # read dictionary from json with simulation durations
+            filename = os.path.join(DATA_PATH, folder, timestamp_and_simulationDuration_filename)
+            with open(filename, 'r') as file:
+                timestampSimulationDurationDict = json.load(file)
+
+            # save data in dictionary
+            dataDict[folder] = [timestampSimulationDurationDict.values(), timestampNetProfitDict.values()]
+
+        # plot net profits over simulation duration
+        shape = ['o', '+', '.']
+        idx = 0
+        for folder in folders:
+            # plot net profits over simulation duration
+            plt.plot(dataDict[folder][0], dataDict[folder][1], shape[idx], label=folder)
+            idx += 1
+        plt.legend()
+        plt.xlabel('Simulation duration [days]')
+        plt.ylabel('Net profit [€]')
+        plt.show()
