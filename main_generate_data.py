@@ -1,20 +1,15 @@
 import os
 import time
+import xlrd
 import json
 import yaml
+from datetime import datetime, timedelta
 
 import requests
 
 from src.settings import DATA_PATH
 from src.data.input_dataloader import InputData
 from src.data.output_dataloader import OutputData
-
-## TODO SECTION
-
-# TODO set of parameter values to test; TODO: do more; or maybe: do dictionaries, and then access with keys
-# TODO baue timestamp-net profit dictionary (and vice versa) and save both in json files
-# TODO check for all input parameters whether important or not
-# TODO check for all input parameters how they can be expressed. Which ways are easiest to implement?!
 
 ## MAIN SECTION
 
@@ -35,72 +30,89 @@ if __name__ == "__main__":
     #folder = '20240422_simulator_A_generated'
     #folder = '20240423_simulator_B_generated'
     #folder = '20240424_simulator_A_generated'
+    #folder = '20240426_simulator_A_generated'
 
     # select whether to save files
     save_file = True
 
     # set of parameter values to test
+    startDate = "01-10-2023" # default is "01-10-2023" # for simulator B
+    startDate = "05-09-2023"#"01-10-2023" # default is "05-09-2023" # for simulator A
+
     endDateList = ["30-10-2023", "15-11-2023", "30-11-2023", 
                    "15-12-2023", "31-12-2023", "15-01-2024",
                    "31-01-2024", "15-02-2024"] # limit is "31-03-2024" # for simulator B
     endDateList = ["30-09-2023", "15-10-2023", "30-10-2023", "15-11-2023", 
                    "30-11-2023", "15-12-2023", "31-12-2023"] # default is "20-11-2023", limit is "31-12-2023" # for simulator A
+    generateEndDateList = False
+    if generateEndDateList:
+        endDateList = []
+        start_date = datetime(2023, 10, 25)
+        end_date = datetime(2023, 12, 14)
+        current_date = start_date
+        while current_date <= end_date:
+            date_str = current_date.strftime("%d-%m-%Y")
+            endDateList.append(date_str)
+            current_date += timedelta(days=1)
+    onlyOneEndDate70 = True
+    if onlyOneEndDate70:
+        endDateList = [(datetime.strptime(startDate, "%d-%m-%Y") + timedelta(days=70)).strftime("%d-%m-%Y")]
     
     pureCO2capList = [100] # default is 100
 
     ## next 3 zipped in for-loop
-    pipe1_maxTempList = [75,
+    pipe1_maxTempList = [75]#,
                          #55,95,
                          #{"20-03": {"0": 70}, "21-06": {"0": 60}, "23-09": {"0": 70}, "21-12": {"0": 80}}, 
                          #{"01-12": {"r-1": 60, "r+1": 80, "r+2": 80, "r+3": 60}, "01-04": {"0": 70}},
-                         {"15-09": {"r-1": 60, "r+1": 70, "r+2": 70, "r+3": 60}, "15-10": {"0": 80}}] # default is {"15-09": {"r-1": 60, "r+1": 70, "r+2": 70, "r+3": 60}, "15-10": {"0": 80}}
-    pipe1_minTempList = [40, 
+                         #{"15-09": {"r-1": 60, "r+1": 70, "r+2": 70, "r+3": 60}, "15-10": {"0": 80}}] # default is {"15-09": {"r-1": 60, "r+1": 70, "r+2": 70, "r+3": 60}, "15-10": {"0": 80}}
+    pipe1_minTempList = [40]#, 
                          #0, 
                          #{"20-03": {"0": 40}, "21-06": {"0": 30}, "23-09": {"0": 40}, "21-12": {"0": 50}}
                          #{"01-10": {"r-1": 45, "r+1": 35, "s+2": 35, "s+3": 45}, "15-04": {"0": 0}},
-                         {"15-09": {"0": 0}, "15-10": {"r-1": 40, "r+1": 50, "s-2": 50, "s": 40}}] # default is {"15-09": {"0": 0}, "15-10": {"r-1": 40, "r+1": 50, "s-2": 50, "s": 40}}
+                         #{"15-09": {"0": 0}, "15-10": {"r-1": 40, "r+1": 50, "s-2": 50, "s": 40}}] # default is {"15-09": {"0": 0}, "15-10": {"r-1": 40, "r+1": 50, "s-2": 50, "s": 40}}
     pipe1_radiationInfluenceList = ["100 300"]#["100 300", "100 400", "0"] # suppress with "0", default is "100 300"
 
     ## next 3 zipped in for-loop
     src1_closeBelowList = ["5 255; 10 50; 15.0 5; 15.2 0"]#["0 290; 10 2", "5 255; 10 50; 15.0 5; 15.2 0"] # default is "5 255; 10 50; 15.0 5; 15.2 0"
-    src1_closeAboveList = [1200,
-                           "450 75"] # default is "450 75"
-    src1_ToutMaxList = [18.0,
+    src1_closeAboveList = [1200]#,
+                           #"450 75"] # default is "450 75"
+    src1_ToutMaxList = [18.0]#,
                         #15, 
-                        {"01-04": -20, "01-09": 15}] # default is 18.0
+                        #{"01-04": -20, "01-09": 15}] # default is 18.0
 
     ## next 4 zipped in for-loop
-    src2_closeBelowList = [5, 
-                           "5 10"] # default is "5 10"
-    src2_closeAboveList = [1200, 
-                           "1200 80"] # default is "1200 80"
-    src2_ToutMaxList = [12, 
-                        {"01-09": 25, "19-09": 18}] # default is {"01-09": 25, "19-09": 18}
+    src2_closeBelowList = [5]#, 
+                           #"5 10"] # default is "5 10"
+    src2_closeAboveList = [1200]#, 
+                           #"1200 80"] # default is "1200 80"
+    src2_ToutMaxList = [12]#, 
+                        #{"01-09": 25, "19-09": 18}] # default is {"01-09": 25, "19-09": 18}
     src2_gapOnTempExcList = ["1 0;4 20"] # default is "1 0;4 20"
 
-    lmp1_intensityList = [150, 200] # default is 150
-    lmp1_hoursLightList = [18,
+    lmp1_intensityList = [150]#, 200] # default is 150
+    lmp1_hoursLightList = [18]#,
                            #{"01-10": 18, "15-02": 16, "15-03": 15},
-                           {"05-09": 0, "07-09": 15}] # default is {"05-09": 0, "07-09": 15}
+                           #{"05-09": 0, "07-09": 15}] # default is {"05-09": 0, "07-09": 15}
     lmp1_endTimeList = [18] # default is 18
     lmp1_maxIglobList = [200] # default is 200
     lmp1_maxPARsumList = [30] # default is 30
 
-    temp_heatingTempList = [{"01-02": {"8.3":12, "10.3":15, "12":15, "13":16, "15.2":16, "18.2":12}, "08-02": {"8.1":12, "10.1":15, "12":15, "13":16, "15.5":16, "18.5":12}, "15-02": {"7.9":12, "9.9":15, "12":15, "13":16, "15.7":16, "18.7":12}}, 
+    temp_heatingTempList = [{"01-02": {"8.3":12, "10.3":15, "12":15, "13":16, "15.2":16, "18.2":12}, "08-02": {"8.1":12, "10.1":15, "12":15, "13":16, "15.5":16, "18.5":12}, "15-02": {"7.9":12, "9.9":15, "12":15, "13":16, "15.7":16, "18.7":12}}]#, 
                             #{"01-02": {"8.3":12, "10.3":15, "12":15, "13":16, "15.2":16, "18.2":12}}, 
                             #{"01-02": {"r":12, "r+2":15, "12":15, "13":16, "s-2":16, "s+1":12}}, 
-                            {"05-09": {"0": "17", "2": "19", "s-1": "19", "s+1": "16", "22": "16", "23": "17"}}] # default is {"05-09": {"0": "17", "2": "19", "s-1": "19", "s+1": "16", "22": "16", "23": "17"}}
+                            #{"05-09": {"0": "17", "2": "19", "s-1": "19", "s+1": "16", "22": "16", "23": "17"}}] # default is {"05-09": {"0": "17", "2": "19", "s-1": "19", "s+1": "16", "22": "16", "23": "17"}}
     temp_radiationInfluenceList = ["100 400 2"] # default is "100 400 2"
-    temp_ventOffsetList = [{"01-01": {"r":1, "r+2":2, "12":3, "s-2":3, "s+1":1}}, 
-                           {"01-04": {"00:00": 2}}] # default is {"01-04": {"00:00": 2}}
-    temp_PbandVentList = [5, 
-                          "6 18;20 4"] # default is "6 18;20 4"
+    temp_ventOffsetList = [{"01-01": {"r":1, "r+2":2, "12":3, "s-2":3, "s+1":1}}]#, 
+                           #{"01-04": {"00:00": 2}}] # default is {"01-04": {"00:00": 2}}
+    temp_PbandVentList = [5]#, 
+                          #"6 18;20 4"] # default is "6 18;20 4"
 
     CO2_setpointList = [{"01-01": {"r+0.5": 400, "r+1": 800, "s-1.5": 800, "s": 400}}] # default is {"01-01": {"r+0.5": 400, "r+1": 800, "s-1.5": 800, "s": 400}}
-    CO2_setpIfLampsList = [700,
-                           {"15-09": "500", "25-09": "700"}] # default is {"15-09": "500", "25-09": "700"}
-    CO2_doseCapacityList = [100,
-                            {"01-09": "100", "01-10": "20 100; 40 50; 70 25"}] # default is {"01-09": "100", "01-10": "20 100; 40 50; 70 25"}
+    CO2_setpIfLampsList = [700]#,
+                           #{"15-09": "500", "25-09": "700"}] # default is {"15-09": "500", "25-09": "700"}
+    CO2_doseCapacityList = [100]#,
+                            #{"01-09": "100", "01-10": "20 100; 40 50; 70 25"}] # default is {"01-09": "100", "01-10": "20 100; 40 50; 70 25"}
     
     ## next 5 zipped in for-loop
     vent_winLeeMinList = [{"01-01": {"00:00": 0}}] # default is {"01-01": {"00:00": 0}}
@@ -109,11 +121,12 @@ if __name__ == "__main__":
     vent_winWndMaxList = [{"01-01": {"00:00": 100}}] # default is {"01-01": {"00:00": 100}}
     vent_startWndList = [{"01-01": {"00:00": 50}}] # default is {"01-01": {"00:00": 50}}
 
-    plantDensityList = ["1 56; 15 42; 30 20",
-                        "1 56; 14 42; 28 30; 35 20"] # default is "1 56; 14 42; 28 30; 35 20"
+    plantDensityList = ["1 56; 15 42; 30 20"]#,
+                        #"1 56; 14 42; 28 30; 35 20"] # default is "1 56; 14 42; 28 30; 35 20"
 
-    # dictionary to save timestamp and net profit
+    # dictionary to save simulation results
     timestampNetProfitDict = {}
+    timestampSimulationDurationDict = {}
 
     # iterate over parameter values
     index = 0 # indexing the simulation number
@@ -154,9 +167,9 @@ if __name__ == "__main__":
                                                                                 # set input data -> 39 variables
                                                                                 NewInput = InputData._init()
 
-                                                                                NewInput.data_dict['simset']['@startDate'] = "05-09-2023"#"01-10-2023" # is fix
+                                                                                NewInput.data_dict['simset']['@startDate'] = startDate # is fix
                                                                                 NewInput.data_dict['simset']['@endDate'] = endDate
-
+                                                                                
                                                                                 NewInput.data_dict['common']['CO2dosing']['@pureCO2cap'] = pureCO2cap
 
                                                                                 NewInput.data_dict['comp1']['heatingpipes']['pipe1']['@maxTemp'] = pipe1_maxTemp
@@ -210,6 +223,13 @@ if __name__ == "__main__":
                                                                                 # save net profit in dictionary
                                                                                 timestampNetProfitDict[timestamp+'_'+str(index)] = NewOutput.data_dict['stats']['economics']['balance']
 
+                                                                                # save simulation duration in dictionary
+                                                                                start_excel_datestamp = NewOutput.data_dict['data']['DateTime']['data'][0]
+                                                                                end_excel_datestamp = NewOutput.data_dict['data']['DateTime']['data'][-1]
+                                                                                start_datetime = xlrd.xldate.xldate_as_datetime(start_excel_datestamp, 0)
+                                                                                end_datetime = xlrd.xldate.xldate_as_datetime(end_excel_datestamp, 0)
+                                                                                timestampSimulationDurationDict[timestamp+'_'+str(index)] = (end_datetime-start_datetime).days
+
                                                                                 # save input and output as JSON files
                                                                                 if save_file:
 
@@ -224,11 +244,16 @@ if __name__ == "__main__":
                                                                                 # update index
                                                                                 index += 1
                                                                                 
-                                                                                # save dictionary with timestamps and corresponding net profit
-                                                                                if save_file:
-                                                                                    # save with lastly used timestamp as prefix
-                                                                                    filename = os.path.join(DATA_PATH, folder, timestamp+'_timestamp_and_netProfit.json')
-                                                                                    with open(filename, 'w') as file:
-                                                                                        json.dump(timestampNetProfitDict, file, indent=4)
+    # save simulation results with lastly used timestamp as prefix
+    if save_file:
+        # save with lastly used timestamp as prefix
+        # save dictionary with timestamps and corresponding net profit
+        filename = os.path.join(DATA_PATH, folder, timestamp+'_timestamp_and_netProfit.json')
+        with open(filename, 'w') as file:
+            json.dump(timestampNetProfitDict, file, indent=4)
+        # save dictionary with timestamps and corresponding net profit
+        filename = os.path.join(DATA_PATH, folder, timestamp+'_timestamp_and_simulationDuration.json')
+        with open(filename, 'w') as file:
+            json.dump(timestampSimulationDurationDict, file, indent=4)
                                                                                         
     print("Number of simulations:", index)

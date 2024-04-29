@@ -3,7 +3,7 @@ import os
 import yaml
 import xlrd
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -12,11 +12,6 @@ import requests
 from src.settings import root, TESTING_PATH, DATA_PATH
 from src.data.input_dataloader import InputData
 from src.data.output_dataloader import OutputData
-
-## TODO SECTION
-
-# TODO find a good simulaiton duration / end date
-# TODO write postprocessing script
 
 ## MAIN SECTION
 
@@ -42,6 +37,7 @@ if __name__ == "__main__":
     extract_net_profits_to_dictionary = False
     extract_simulation_duration_to_dictionary = False
     plot_net_profits_over_simulation_duration = False
+    build_datetime_strings_list = False
 
     if initial_example_and_data_handling:
 
@@ -121,7 +117,16 @@ if __name__ == "__main__":
     if extract_net_profits_to_dictionary:
         
         # define used folder
-        folder = '20240422_simulator_A_generated'
+        #folder = '20240422_simulator_A_generated'
+        #folder = '20240423_simulator_B_generated'
+        #folder = '20240424_simulator_A_generated'
+        folder = '20240426_simulator_A_generated'
+
+        # select replace string
+        if '_A_' in folder:
+            replace_str = '_simulator_A_output'      
+        elif '_B_' in folder:
+            replace_str = '_simulator_B_output'
 
         # initialize dictionary place holder
         timestampNetProfitDict = {}
@@ -136,7 +141,7 @@ if __name__ == "__main__":
         for output_file in output_files:
             
             # extray dictionary key from filename
-            output_file_key = output_file.replace('_simulator_A_output', '')
+            output_file_key = output_file.replace(replace_str, '')
             output_file_key_final = output_file_key.replace('.json', '')
 
             # read output json
@@ -146,19 +151,27 @@ if __name__ == "__main__":
             # save net profit to dictionary
             timestampNetProfitDict[output_file_key_final] = NewOutput.data_dict['stats']['economics']['balance']
 
+        # finalize filename
+        output_file_key_final = output_file_key_final.split('_')[0]
+
         # save dictionary as json
         filename = os.path.join(DATA_PATH, folder, output_file_key_final+'_timestamp_and_netProfit.json')
         with open(filename, 'w') as file:
             json.dump(timestampNetProfitDict, file, indent=4)
-
-        # TODO anschließend muss noch der simulations-index im geschriebenen dictionary file handisch angepasst werden. Das sollte gefixt werden.
-
+            
     if extract_simulation_duration_to_dictionary:
         
         # define used folder
         #folder = '20240422_simulator_A_generated'
         #folder = '20240423_simulator_B_generated'
-        folder = '20240424_simulator_A_generated'
+        #folder = '20240424_simulator_A_generated'
+        folder = '20240426_simulator_A_generated'
+
+        # select replace string
+        if '_A_' in folder:
+            replace_str = '_simulator_A_output'      
+        elif '_B_' in folder:
+            replace_str = '_simulator_B_output'
 
         # initialize dictionary place holder
         timestampSimulationDurationDict = {}
@@ -173,7 +186,7 @@ if __name__ == "__main__":
         for output_file in output_files:
             
             # extray dictionary key from filename
-            output_file_key = output_file.replace('_simulator_A_output', '')
+            output_file_key = output_file.replace(replace_str, '')
             output_file_key_final = output_file_key.replace('.json', '')
 
             # read output json
@@ -194,20 +207,21 @@ if __name__ == "__main__":
             # save net profit to dictionary
             timestampSimulationDurationDict[output_file_key_final] = simulation_duration
 
+        # finalize filename
+        output_file_key_final = output_file_key_final.split('_')[0]
+
         # save dictionary as json
         filename = os.path.join(DATA_PATH, folder, output_file_key_final+'_timestamp_and_simulationDuration.json')
         with open(filename, 'w') as file:
             json.dump(timestampSimulationDurationDict, file, indent=4)
-
-        # TODO anschließend muss noch der simulations-index im geschriebenen dictionary file handisch angepasst werden. Das sollte gefixt werden.
-
-
+            
     if plot_net_profits_over_simulation_duration:
         
         # all investigated folders
         folders = ['20240422_simulator_A_generated', 
                    '20240423_simulator_B_generated', 
-                   '20240424_simulator_A_generated']
+                   '20240424_simulator_A_generated',
+                   '20240426_simulator_A_generated']
         
         # initialize data dictionary
         dataDict = {}
@@ -236,7 +250,7 @@ if __name__ == "__main__":
             dataDict[folder] = [timestampSimulationDurationDict.values(), timestampNetProfitDict.values()]
 
         # plot net profits over simulation duration
-        shape = ['o', '+', '.']
+        shape = ['o', '+', '.', 'x']
         idx = 0
         for folder in folders:
             # plot net profits over simulation duration
@@ -246,3 +260,32 @@ if __name__ == "__main__":
         plt.xlabel('Simulation duration [days]')
         plt.ylabel('Net profit [€]')
         plt.show()
+
+    if build_datetime_strings_list:
+
+        # Startdatum
+        start_date = datetime(2023, 10, 25)
+
+        # Enddatum
+        end_date = datetime(2023, 12, 14)
+
+        # Liste für die Datums-Strings
+        date_list = []
+
+        # Schleife durch alle Tage zwischen Start- und Enddatum
+        current_date = start_date
+        while current_date <= end_date:
+            # Formatieren des Datums im gewünschten Format und Hinzufügen zur Liste
+            date_str = current_date.strftime("%d-%m-%Y")
+            date_list.append(date_str)
+            
+            # Nächster Tag
+            current_date += timedelta(days=1)
+
+        # Ausgabe der Liste
+        print(date_list)
+
+        start_date = "05-09-2023"
+        end_date = (datetime.strptime(start_date, "%d-%m-%Y") + timedelta(days=70)).strftime("%d-%m-%Y")
+
+        print(end_date)
