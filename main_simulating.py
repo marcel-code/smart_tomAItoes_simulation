@@ -11,10 +11,11 @@ from pathlib import Path
 # TODO start:
 # TODO check for all input parameters whether important or not. Which order is senseful
 # TODO check for all input parameters how they can be expressed. Which ways are easiest to implement?! -> encoding?!
+# TODO implement rules for parameter value generations, like limitations, dependencies, ordering, etc.
 # TODO invent own parametization, e.g. invent interdependencies between parameters. Like for timepoints etc, with datetimes
 
 # TODO pipeline:
-# TODO write postprocessing script: not as cript but as method/function/module/... in the src folder as tool. So it is run "automatically" after the simulation while learning
+# TODO write postprocessing script: not as script but as method/function/module/... in the src folder as tool. So it is run "automatically" after the simulation while learning
 # TODO write postprocessing script: Which metrics to calculate? Which features to extract and interpret?!
 
 # TODO training features:
@@ -49,5 +50,4 @@ if __name__ == "__main__":
     #parser = argparse.ArgumentParser()
     #parser.add_argument("dummy")
     #args = parser.parse_intermixed_args()
-
-    pass
+    print(len([float(x) for x in range(0, 51, 5)]))

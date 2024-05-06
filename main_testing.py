@@ -36,8 +36,10 @@ if __name__ == "__main__":
     initial_example_and_data_handling = False
     extract_net_profits_to_dictionary = False
     extract_simulation_duration_to_dictionary = False
-    plot_net_profits_over_simulation_duration = False
+    plot_net_profit_over_simulation_duration = False
     build_datetime_strings_list = False
+    extract_parameter_to_dictionary = True
+    plot_net_profit_over_parameter = True
 
     if initial_example_and_data_handling:
 
@@ -215,7 +217,7 @@ if __name__ == "__main__":
         with open(filename, 'w') as file:
             json.dump(timestampSimulationDurationDict, file, indent=4)
             
-    if plot_net_profits_over_simulation_duration:
+    if plot_net_profit_over_simulation_duration:
         
         # all investigated folders
         folders = ['20240422_simulator_A_generated', 
@@ -289,3 +291,41 @@ if __name__ == "__main__":
         end_date = (datetime.strptime(start_date, "%d-%m-%Y") + timedelta(days=70)).strftime("%d-%m-%Y")
 
         print(end_date)
+
+    if plot_net_profit_over_parameter:
+        # TODO
+
+        # define used folder
+        folder = '20240429_simulator_A'
+
+        # define used parameter folder
+        parameter_folder = 'pureCO2cap'
+        parameter_folder = 'pipe1_maxTemp'
+        parameter_folder = 'pipe1_minTemp'
+        parameter_folder = 'pipe1_radiationInfluence'
+
+        # initialize data dictionary
+        dataDict = {}
+
+        # list of all filenames in folder
+        folder_path = os.path.join(DATA_PATH, folder, parameter_folder)
+        filenames = os.listdir(folder_path)
+
+        # filename of json file with net profits and simulation durations
+        timestamp_and_netProfit_filename = [filename for filename in filenames if 'timestamp_and_netProfit' in filename][0]
+        timestamp_and_parameter_filename = [filename for filename in filenames if parameter_folder in filename][0]
+
+        # read dictionary from json with net profits
+        filename = os.path.join(DATA_PATH, folder, parameter_folder, timestamp_and_netProfit_filename)
+        with open(filename, 'r') as file:
+            timestampNetProfitDict = json.load(file)
+        # read dictionary from json with parameter
+        filename = os.path.join(DATA_PATH, folder, parameter_folder, timestamp_and_parameter_filename)
+        with open(filename, 'r') as file:
+            timestampParameterDict = json.load(file)
+
+        # plot net profits over simulation duration
+        plt.plot(timestampParameterDict.values(), timestampNetProfitDict.values(), 'x')
+        plt.xlabel(parameter_folder)
+        plt.ylabel('Net profit [€]')
+        plt.show()

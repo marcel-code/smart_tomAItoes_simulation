@@ -26,11 +26,12 @@ if __name__ == "__main__":
         keystr = 'B'
 
     # select folder
-    folder = 'generated_test'
+    #folder = 'generated_test'
     #folder = '20240422_simulator_A_generated'
     #folder = '20240423_simulator_B_generated'
     #folder = '20240424_simulator_A_generated'
     #folder = '20240426_simulator_A_generated'
+    folder = '20240429_simulator_A'
 
     # select whether to save files
     save_file = True
@@ -58,26 +59,28 @@ if __name__ == "__main__":
     if onlyOneEndDate70:
         endDateList = [(datetime.strptime(startDate, "%d-%m-%Y") + timedelta(days=70)).strftime("%d-%m-%Y")]
     
-    pureCO2capList = [100] # default is 100
+    # parameter_folder = 'pureCO2cap'
+    pureCO2capList = [60.0]#[float(x) for x in range(10, 201, 10)] # default is 100
 
     ## next 3 zipped in for-loop
-    pipe1_maxTempList = [75]#,
+    pipe1_maxTempList = [90]*4 #[float(x) for x in range(15, 121, 5)]#,
                          #55,95,
                          #{"20-03": {"0": 70}, "21-06": {"0": 60}, "23-09": {"0": 70}, "21-12": {"0": 80}}, 
                          #{"01-12": {"r-1": 60, "r+1": 80, "r+2": 80, "r+3": 60}, "01-04": {"0": 70}},
                          #{"15-09": {"r-1": 60, "r+1": 70, "r+2": 70, "r+3": 60}, "15-10": {"0": 80}}] # default is {"15-09": {"r-1": 60, "r+1": 70, "r+2": 70, "r+3": 60}, "15-10": {"0": 80}}
-    pipe1_minTempList = [40]#, 
+    pipe1_minTempList = [35]*4 #, 
                          #0, 
                          #{"20-03": {"0": 40}, "21-06": {"0": 30}, "23-09": {"0": 40}, "21-12": {"0": 50}}
                          #{"01-10": {"r-1": 45, "r+1": 35, "s+2": 35, "s+3": 45}, "15-04": {"0": 0}},
                          #{"15-09": {"0": 0}, "15-10": {"r-1": 40, "r+1": 50, "s-2": 50, "s": 40}}] # default is {"15-09": {"0": 0}, "15-10": {"r-1": 40, "r+1": 50, "s-2": 50, "s": 40}}
-    pipe1_radiationInfluenceList = ["100 300"]#["100 300", "100 400", "0"] # suppress with "0", default is "100 300"
+    pipe1_radiationInfluenceList = ['0'] #["100 300", "100 400", "0"] # suppress with "0", default is "100 300"
 
     ## next 3 zipped in for-loop
+    parameter_folder = 'src1_closeBelow' # TODO
     src1_closeBelowList = ["5 255; 10 50; 15.0 5; 15.2 0"]#["0 290; 10 2", "5 255; 10 50; 15.0 5; 15.2 0"] # default is "5 255; 10 50; 15.0 5; 15.2 0"
-    src1_closeAboveList = [1200]#,
+    src1_closeAboveList = [1200]*len(src1_closeBelowList)#,
                            #"450 75"] # default is "450 75"
-    src1_ToutMaxList = [18.0]#,
+    src1_ToutMaxList = [18.0]*len(src1_closeBelowList)#,
                         #15, 
                         #{"01-04": -20, "01-09": 15}] # default is 18.0
 
@@ -126,7 +129,7 @@ if __name__ == "__main__":
 
     # dictionary to save simulation results
     timestampNetProfitDict = {}
-    timestampSimulationDurationDict = {}
+    timestampParameterDict = {}
 
     # iterate over parameter values
     index = 0 # indexing the simulation number
@@ -223,22 +226,18 @@ if __name__ == "__main__":
                                                                                 # save net profit in dictionary
                                                                                 timestampNetProfitDict[timestamp+'_'+str(index)] = NewOutput.data_dict['stats']['economics']['balance']
 
-                                                                                # save simulation duration in dictionary
-                                                                                start_excel_datestamp = NewOutput.data_dict['data']['DateTime']['data'][0]
-                                                                                end_excel_datestamp = NewOutput.data_dict['data']['DateTime']['data'][-1]
-                                                                                start_datetime = xlrd.xldate.xldate_as_datetime(start_excel_datestamp, 0)
-                                                                                end_datetime = xlrd.xldate.xldate_as_datetime(end_excel_datestamp, 0)
-                                                                                timestampSimulationDurationDict[timestamp+'_'+str(index)] = (end_datetime-start_datetime).days
+                                                                                # save parameter value in dictionary
+                                                                                timestampParameterDict[timestamp+'_'+str(index)] = src1_closeBelow # TODO
 
                                                                                 # save input and output as JSON files
                                                                                 if save_file:
 
                                                                                     # save input
-                                                                                    filename_input = os.path.join(DATA_PATH, folder, timestamp+'_'+str(index)+'_simulator_'+keystr+'_input.json')
+                                                                                    filename_input = os.path.join(DATA_PATH, folder, parameter_folder, timestamp+'_'+str(index)+'_simulator_'+keystr+'_input.json')
                                                                                     NewInput.write_json(filename_input)
 
                                                                                     # save output
-                                                                                    filename_output = os.path.join(DATA_PATH, folder, timestamp+'_'+str(index)+'_simulator_'+keystr+'_output.json')
+                                                                                    filename_output = os.path.join(DATA_PATH, folder, parameter_folder, timestamp+'_'+str(index)+'_simulator_'+keystr+'_output.json')
                                                                                     NewOutput.write_json(filename_output)
 
                                                                                 # update index
@@ -248,12 +247,13 @@ if __name__ == "__main__":
     if save_file:
         # save with lastly used timestamp as prefix
         # save dictionary with timestamps and corresponding net profit
-        filename = os.path.join(DATA_PATH, folder, timestamp+'_timestamp_and_netProfit.json')
+        filename = os.path.join(DATA_PATH, folder, parameter_folder, timestamp+'_timestamp_and_netProfit.json')
+        print(filename)
         with open(filename, 'w') as file:
             json.dump(timestampNetProfitDict, file, indent=4)
         # save dictionary with timestamps and corresponding net profit
-        filename = os.path.join(DATA_PATH, folder, timestamp+'_timestamp_and_simulationDuration.json')
+        filename = os.path.join(DATA_PATH, folder, parameter_folder, timestamp+'_timestamp_and_'+parameter_folder+'.json')
         with open(filename, 'w') as file:
-            json.dump(timestampSimulationDurationDict, file, indent=4)
+            json.dump(timestampParameterDict, file, indent=4)
                                                                                         
     print("Number of simulations:", index)
