@@ -19,26 +19,32 @@ if __name__ == "__main__":
     url = 'https://www.digigreenhouse.wur.nl/AGC2024/model/kaspro'
     key_A = 'SmartToms-A-gl4d-1cam' # key to simulator A
     key_B = 'SmartToms-B-gl4d-1cam' # key to simulator B
-    key = key_A
+    key = key_B
     if key == key_A:
         keystr = 'A'
     elif key == key_B:
         keystr = 'B'
 
+    key = key_A
     # select folder
     #folder = 'generated_test'
     #folder = '20240422_simulator_A_generated'
     #folder = '20240423_simulator_B_generated'
     #folder = '20240424_simulator_A_generated'
     #folder = '20240426_simulator_A_generated'
-    folder = '20240429_simulator_A'
+    #folder = '20240429_simulator_A'
+    folder = '20240507_simulator_B_generated'
+
+    # select whether simulate or not
+    simulate = True
 
     # select whether to save files
     save_file = True
 
     # set of parameter values to test
     startDate = "01-10-2023" # default is "01-10-2023" # for simulator B
-    startDate = "05-09-2023"#"01-10-2023" # default is "05-09-2023" # for simulator A
+    startDate = "05-09-2023" #"01-10-2023" # default is "05-09-2023" # for simulator A
+    startDate = '15-01-2023' # TODO today special
 
     endDateList = ["30-10-2023", "15-11-2023", "30-11-2023", 
                    "15-12-2023", "31-12-2023", "15-01-2024",
@@ -60,15 +66,15 @@ if __name__ == "__main__":
         endDateList = [(datetime.strptime(startDate, "%d-%m-%Y") + timedelta(days=70)).strftime("%d-%m-%Y")]
     
     # parameter_folder = 'pureCO2cap'
-    pureCO2capList = [60.0]#[float(x) for x in range(10, 201, 10)] # default is 100
+    pureCO2capList = [60.0]*2#[float(x) for x in range(10, 201, 10)] # default is 100
 
     ## next 3 zipped in for-loop
-    pipe1_maxTempList = [90]*4 #[float(x) for x in range(15, 121, 5)]#,
+    pipe1_maxTempList = [90, #[float(x) for x in range(15, 121, 5)]#,
                          #55,95,
-                         #{"20-03": {"0": 70}, "21-06": {"0": 60}, "23-09": {"0": 70}, "21-12": {"0": 80}}, 
+                         {"20-03": {"0": 70}, "21-06": {"0": 60}, "23-09": {"0": 70}, "21-12": {"0": 80}}]#, 
                          #{"01-12": {"r-1": 60, "r+1": 80, "r+2": 80, "r+3": 60}, "01-04": {"0": 70}},
                          #{"15-09": {"r-1": 60, "r+1": 70, "r+2": 70, "r+3": 60}, "15-10": {"0": 80}}] # default is {"15-09": {"r-1": 60, "r+1": 70, "r+2": 70, "r+3": 60}, "15-10": {"0": 80}}
-    pipe1_minTempList = [35]*4 #, 
+    pipe1_minTempList = [35]*2 #, 
                          #0, 
                          #{"20-03": {"0": 40}, "21-06": {"0": 30}, "23-09": {"0": 40}, "21-12": {"0": 50}}
                          #{"01-10": {"r-1": 45, "r+1": 35, "s+2": 35, "s+3": 45}, "15-04": {"0": 0}},
@@ -76,40 +82,40 @@ if __name__ == "__main__":
     pipe1_radiationInfluenceList = ['0'] #["100 300", "100 400", "0"] # suppress with "0", default is "100 300"
 
     ## next 3 zipped in for-loop
-    parameter_folder = 'src1_closeBelow' # TODO
-    src1_closeBelowList = ["5 255; 10 50; 15.0 5; 15.2 0"]#["0 290; 10 2", "5 255; 10 50; 15.0 5; 15.2 0"] # default is "5 255; 10 50; 15.0 5; 15.2 0"
-    src1_closeAboveList = [1200]*len(src1_closeBelowList)#,
-                           #"450 75"] # default is "450 75"
-    src1_ToutMaxList = [18.0]*len(src1_closeBelowList)#,
+    parameter_folder = ''#'src1_closeBelow' # TODO
+    src1_closeBelowList = ["5 255; 10 50; 15.0 5; 15.2 0"]*2#["0 290; 10 2", "5 255; 10 50; 15.0 5; 15.2 0"] # default is "5 255; 10 50; 15.0 5; 15.2 0"
+    src1_closeAboveList = [1200,
+                           "450 75"] # default is "450 75"
+    src1_ToutMaxList = [18.0,
                         #15, 
-                        #{"01-04": -20, "01-09": 15}] # default is 18.0
+                        {"01-04": -20, "01-09": 15}] # default is 18.0
 
     ## next 4 zipped in for-loop
-    src2_closeBelowList = [5]#, 
-                           #"5 10"] # default is "5 10"
-    src2_closeAboveList = [1200]#, 
-                           #"1200 80"] # default is "1200 80"
-    src2_ToutMaxList = [12]#, 
-                        #{"01-09": 25, "19-09": 18}] # default is {"01-09": 25, "19-09": 18}
-    src2_gapOnTempExcList = ["1 0;4 20"] # default is "1 0;4 20"
+    src2_closeBelowList = [5, 5, 5, 5, 
+                           "5 10", "5 10", "5 10", "5 10"] # default is "5 10"
+    src2_closeAboveList = [1200, 1200, "1200 80", "1200 80",
+                           1200, 1200, "1200 80", "1200 80"] # default is "1200 80"
+    src2_ToutMaxList = [12, {"01-09": 25, "19-09": 18}, 12, {"01-09": 25, "19-09": 18},
+                        12, {"01-09": 25, "19-09": 18}, 12, {"01-09": 25, "19-09": 18}] # default is {"01-09": 25, "19-09": 18}
+    src2_gapOnTempExcList = ["1 0;4 20"]*8 # default is "1 0;4 20"
 
-    lmp1_intensityList = [150]#, 200] # default is 150
-    lmp1_hoursLightList = [18]#,
+    lmp1_intensityList = [150, 200] # default is 150
+    lmp1_hoursLightList = [18]#, 
                            #{"01-10": 18, "15-02": 16, "15-03": 15},
                            #{"05-09": 0, "07-09": 15}] # default is {"05-09": 0, "07-09": 15}
     lmp1_endTimeList = [18] # default is 18
     lmp1_maxIglobList = [200] # default is 200
     lmp1_maxPARsumList = [30] # default is 30
 
-    temp_heatingTempList = [{"01-02": {"8.3":12, "10.3":15, "12":15, "13":16, "15.2":16, "18.2":12}, "08-02": {"8.1":12, "10.1":15, "12":15, "13":16, "15.5":16, "18.5":12}, "15-02": {"7.9":12, "9.9":15, "12":15, "13":16, "15.7":16, "18.7":12}}]#, 
+    temp_heatingTempList = [{"01-02": {"8.3":12, "10.3":15, "12":15, "13":16, "15.2":16, "18.2":12}, "08-02": {"8.1":12, "10.1":15, "12":15, "13":16, "15.5":16, "18.5":12}, "15-02": {"7.9":12, "9.9":15, "12":15, "13":16, "15.7":16, "18.7":12}}, 
                             #{"01-02": {"8.3":12, "10.3":15, "12":15, "13":16, "15.2":16, "18.2":12}}, 
                             #{"01-02": {"r":12, "r+2":15, "12":15, "13":16, "s-2":16, "s+1":12}}, 
-                            #{"05-09": {"0": "17", "2": "19", "s-1": "19", "s+1": "16", "22": "16", "23": "17"}}] # default is {"05-09": {"0": "17", "2": "19", "s-1": "19", "s+1": "16", "22": "16", "23": "17"}}
+                            {"05-09": {"0": "17", "2": "19", "s-1": "19", "s+1": "16", "22": "16", "23": "17"}}] # default is {"05-09": {"0": "17", "2": "19", "s-1": "19", "s+1": "16", "22": "16", "23": "17"}}
     temp_radiationInfluenceList = ["100 400 2"] # default is "100 400 2"
-    temp_ventOffsetList = [{"01-01": {"r":1, "r+2":2, "12":3, "s-2":3, "s+1":1}}]#, 
-                           #{"01-04": {"00:00": 2}}] # default is {"01-04": {"00:00": 2}}
-    temp_PbandVentList = [5]#, 
-                          #"6 18;20 4"] # default is "6 18;20 4"
+    temp_ventOffsetList = [{"01-01": {"r":1, "r+2":2, "12":3, "s-2":3, "s+1":1}}, 
+                           {"01-04": {"00:00": 2}}] # default is {"01-04": {"00:00": 2}}
+    temp_PbandVentList = [5, 
+                          "6 18;20 4"] # default is "6 18;20 4"
 
     CO2_setpointList = [{"01-01": {"r+0.5": 400, "r+1": 800, "s-1.5": 800, "s": 400}}] # default is {"01-01": {"r+0.5": 400, "r+1": 800, "s-1.5": 800, "s": 400}}
     CO2_setpIfLampsList = [700]#,
@@ -129,7 +135,7 @@ if __name__ == "__main__":
 
     # dictionary to save simulation results
     timestampNetProfitDict = {}
-    timestampParameterDict = {}
+    # timestampParameterDict = {} # TODO: activate again
 
     # iterate over parameter values
     index = 0 # indexing the simulation number
@@ -220,24 +226,27 @@ if __name__ == "__main__":
                                                                                 NewInput.data_dict['crp_dwarftomato']['cropModel']['@plantDensity'] = plantDensity
                                                                                 
                                                                                 # simulate
-                                                                                response = requests.post(url, data={'key': key, 'parameters': NewInput.get_data_str()})
-                                                                                NewOutput = OutputData.from_response(response)
+                                                                                if simulate:
+                                                                                    response = requests.post(url, data={'key': key, 'parameters': NewInput.get_data_str()})
+                                                                                    NewOutput = OutputData.from_response(response)
 
-                                                                                # save net profit in dictionary
-                                                                                timestampNetProfitDict[timestamp+'_'+str(index)] = NewOutput.data_dict['stats']['economics']['balance']
-
-                                                                                # save parameter value in dictionary
-                                                                                timestampParameterDict[timestamp+'_'+str(index)] = src1_closeBelow # TODO
+                                                                                    # save net profit in dictionary
+                                                                                    timestampNetProfitDict[timestamp+'_'+str(index)] = NewOutput.data_dict['stats']['economics']['balance']
+                                                                                    # TODO activate again the following:
+                                                                                    """
+                                                                                    # save parameter value in dictionary
+                                                                                    timestampParameterDict[timestamp+'_'+str(index)] = src1_closeBelow # TODO
+                                                                                    """
 
                                                                                 # save input and output as JSON files
                                                                                 if save_file:
 
                                                                                     # save input
-                                                                                    filename_input = os.path.join(DATA_PATH, folder, parameter_folder, timestamp+'_'+str(index)+'_simulator_'+keystr+'_input.json')
+                                                                                    filename_input = os.path.join(DATA_PATH, folder, timestamp+'_'+str(index)+'_simulator_'+keystr+'_input.json') # TODO:again the following: os.path.join(DATA_PATH, folder, parameter_folder, timestamp+'_'+str(index)+'_simulator_'+keystr+'_input.json')
                                                                                     NewInput.write_json(filename_input)
 
                                                                                     # save output
-                                                                                    filename_output = os.path.join(DATA_PATH, folder, parameter_folder, timestamp+'_'+str(index)+'_simulator_'+keystr+'_output.json')
+                                                                                    filename_output = os.path.join(DATA_PATH, folder, timestamp+'_'+str(index)+'_simulator_'+keystr+'_output.json') # TODO:again the following: os.path.join(DATA_PATH, folder, parameter_folder, timestamp+'_'+str(index)+'_simulator_'+keystr+'_output.json')
                                                                                     NewOutput.write_json(filename_output)
 
                                                                                 # update index
@@ -247,13 +256,16 @@ if __name__ == "__main__":
     if save_file:
         # save with lastly used timestamp as prefix
         # save dictionary with timestamps and corresponding net profit
-        filename = os.path.join(DATA_PATH, folder, parameter_folder, timestamp+'_timestamp_and_netProfit.json')
+        filename = os.path.join(DATA_PATH, folder, timestamp+'_timestamp_and_netProfit.json') # TODO:again the following: os.path.join(DATA_PATH, folder, parameter_folder, timestamp+'_timestamp_and_netProfit.json')
         print(filename)
         with open(filename, 'w') as file:
             json.dump(timestampNetProfitDict, file, indent=4)
+        # TODO activate again the following:
+        """
         # save dictionary with timestamps and corresponding net profit
         filename = os.path.join(DATA_PATH, folder, parameter_folder, timestamp+'_timestamp_and_'+parameter_folder+'.json')
         with open(filename, 'w') as file:
             json.dump(timestampParameterDict, file, indent=4)
+        """
                                                                                         
     print("Number of simulations:", index)
