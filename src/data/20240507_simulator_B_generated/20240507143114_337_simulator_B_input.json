@@ -1,0 +1,138 @@
+{
+    "simset": {
+        "@startDate": "15-01-2023",
+        "@endDate": "26-03-2023"
+    },
+    "common": {
+        "CO2dosing": {
+            "@pureCO2cap": 60.0
+        }
+    },
+    "comp1": {
+        "heatingpipes": {
+            "pipe1": {
+                "@maxTemp": 90,
+                "@minTemp": 35,
+                "@radiationInfluence": "0"
+            }
+        },
+        "screens": {
+            "scr1": {
+                "@enabled": true,
+                "@material": "scr_Transparent",
+                "@closeBelow": "5 255; 10 50; 15.0 5; 15.2 0",
+                "@closeAbove": 1200,
+                "@ToutMax": 18.0,
+                "@lightPollutionPrevention": false
+            },
+            "scr2": {
+                "@enabled": true,
+                "@material": "scr_Blackout",
+                "@closeBelow": "5 10",
+                "@closeAbove": 1200,
+                "@ToutMax": {
+                    "01-09": 25,
+                    "19-09": 18
+                },
+                "@lightPollutionPrevention": true,
+                "@gapOnTempExc": "1 0;4 20"
+            }
+        },
+        "illumination": {
+            "lmp1": {
+                "@enabled": true,
+                "@type": "lmp_LED27",
+                "@intensity": 150,
+                "@hoursLight": 18,
+                "@endTime": 18,
+                "@maxIglob": 200,
+                "@maxPARsum": 30
+            }
+        },
+        "setpoints": {
+            "temp": {
+                "@heatingTemp": {
+                    "01-02": {
+                        "8.3": 12,
+                        "10.3": 15,
+                        "12": 15,
+                        "13": 16,
+                        "15.2": 16,
+                        "18.2": 12
+                    },
+                    "08-02": {
+                        "8.1": 12,
+                        "10.1": 15,
+                        "12": 15,
+                        "13": 16,
+                        "15.5": 16,
+                        "18.5": 12
+                    },
+                    "15-02": {
+                        "7.9": 12,
+                        "9.9": 15,
+                        "12": 15,
+                        "13": 16,
+                        "15.7": 16,
+                        "18.7": 12
+                    }
+                },
+                "@radiationInfluence": "100 400 2",
+                "@ventOffset": {
+                    "01-01": {
+                        "r": 1,
+                        "r+2": 2,
+                        "12": 3,
+                        "s-2": 3,
+                        "s+1": 1
+                    }
+                },
+                "@PbandVent": "6 18;20 4"
+            },
+            "CO2": {
+                "@setpoint": {
+                    "01-01": {
+                        "r+0.5": 400,
+                        "r+1": 800,
+                        "s-1.5": 800,
+                        "s": 400
+                    }
+                },
+                "@setpIfLamps": 700,
+                "@doseCapacity": 100
+            },
+            "ventilation": {
+                "@winLeeMin": {
+                    "01-01": {
+                        "00:00": 0
+                    }
+                },
+                "@winLeeMax": {
+                    "01-01": {
+                        "00:00": 100
+                    }
+                },
+                "@winWndMin": {
+                    "01-01": {
+                        "00:00": 0
+                    }
+                },
+                "@winWndMax": {
+                    "01-01": {
+                        "00:00": 100
+                    }
+                },
+                "@startWnd": {
+                    "01-01": {
+                        "00:00": 50
+                    }
+                }
+            }
+        }
+    },
+    "crp_dwarftomato": {
+        "cropModel": {
+            "@plantDensity": "1 56; 15 42; 30 20"
+        }
+    }
+}
