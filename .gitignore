@@ -166,5 +166,6 @@ cython_debug/
 /src/data/20240426_simulator_A_generated/*.json
 /src/data/20240429_simulator_A/**/*.json
 /src/data/20240508_simulator_A/*.json
+/src/data/20240520_simulator_A_generated/*.json
 /src/data/generated_test/*.json
 /src/data/**/*.png
