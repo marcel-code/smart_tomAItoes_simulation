@@ -25,7 +25,7 @@ if __name__ == "__main__":
     elif key == key_B:
         keystr = "B"
 
-    key = key_A
+    # key = key_A
     # select folder
     # folder = 'generated_test'
     # folder = '20240422_simulator_A_generated'
@@ -46,8 +46,8 @@ if __name__ == "__main__":
 
     # set of parameter values to test
     startDate = "01-10-2023"  # default is "01-10-2023" # for simulator B
-    startDate = "05-09-2023"  # "01-10-2023" # default is "05-09-2023" # for simulator A
-    #startDate = "15-01-2023"  # TODO today special
+    # startDate = "05-09-2023"  # "01-10-2023" # default is "05-09-2023" # for simulator A
+    startDate = "15-01-2023"  # TODO today special
 
     endDateList = [
         "30-10-2023",
