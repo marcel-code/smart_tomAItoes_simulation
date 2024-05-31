@@ -160,12 +160,5 @@ cython_debug/
 #.idea/
 
 # avoid json and png files from the data folder
-/src/data/20240422_simulator_A_generated/*.json
-/src/data/20240423_simulator_B_generated/*.json
-/src/data/20240424_simulator_A_generated/*.json
-/src/data/20240426_simulator_A_generated/*.json
-/src/data/20240429_simulator_A/**/*.json
-/src/data/20240508_simulator_A/*.json
-/src/data/20240520_simulator_A_generated/*.json
-/src/data/generated_test/*.json
+/src/data/**/*.json
 /src/data/**/*.png

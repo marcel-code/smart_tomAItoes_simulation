@@ -38,8 +38,10 @@ if __name__ == "__main__":
     extract_simulation_duration_to_dictionary = False
     plot_net_profit_over_simulation_duration = False
     build_datetime_strings_list = False
-    extract_parameter_to_dictionary = True
-    plot_net_profit_over_parameter = True
+    extract_parameter_to_dictionary = False
+    plot_net_profit_over_parameter = False
+    preperation = True
+    run_final = True
 
     if initial_example_and_data_handling:
 
@@ -122,7 +124,8 @@ if __name__ == "__main__":
         #folder = '20240422_simulator_A_generated'
         #folder = '20240423_simulator_B_generated'
         #folder = '20240424_simulator_A_generated'
-        folder = '20240426_simulator_A_generated'
+        #folder = '20240426_simulator_A_generated'
+        folder = '20240521_simulator_B_generated'
 
         # select replace string
         if '_A_' in folder:
@@ -167,7 +170,8 @@ if __name__ == "__main__":
         #folder = '20240422_simulator_A_generated'
         #folder = '20240423_simulator_B_generated'
         #folder = '20240424_simulator_A_generated'
-        folder = '20240426_simulator_A_generated'
+        #folder = '20240426_simulator_A_generated'
+        folder = '20240521_simulator_B_generated'
 
         # select replace string
         if '_A_' in folder:
@@ -223,7 +227,8 @@ if __name__ == "__main__":
         folders = ['20240422_simulator_A_generated', 
                    '20240423_simulator_B_generated', 
                    '20240424_simulator_A_generated',
-                   '20240426_simulator_A_generated']
+                   '20240426_simulator_A_generated',
+                   '20240521_simulator_B_generated']
         
         # initialize data dictionary
         dataDict = {}
@@ -252,7 +257,7 @@ if __name__ == "__main__":
             dataDict[folder] = [timestampSimulationDurationDict.values(), timestampNetProfitDict.values()]
 
         # plot net profits over simulation duration
-        shape = ['o', '+', '.', 'x']
+        shape = ['o', '+', '.', 'x', '*']
         idx = 0
         for folder in folders:
             # plot net profits over simulation duration
@@ -329,3 +334,138 @@ if __name__ == "__main__":
         plt.xlabel(parameter_folder)
         plt.ylabel('Net profit [€]')
         plt.show()
+    
+    if preperation:
+
+        # all investigated folders
+        folders = ['20240422_simulator_A_generated', 
+                   '20240423_simulator_B_generated', 
+                   '20240424_simulator_A_generated',
+                   '20240426_simulator_A_generated',
+                   'pipe1_maxTemp',
+                   'pipe1_minTemp',
+                   'pureCO2cap',
+                   '20240507_simulator_B_generated',
+                   '20240520_simulator_A_generated',
+                   '20240521_simulator_B_generated']
+        
+        # initialize data dictionary
+        dataDict = {}
+
+        # for all folders
+        for folder in folders:
+
+            # list of all filenames in folder
+            if folder == 'pipe1_maxTemp' or folder == 'pipe1_minTemp' or folder == 'pureCO2cap':
+                folder_path = os.path.join(DATA_PATH, '20240429_simulator_A', folder)
+            else:
+                folder_path = os.path.join(DATA_PATH, folder)
+            filenames = os.listdir(folder_path)
+
+            # filename of json file with net profits and simulation durations
+            timestamp_and_netProfit_filename = [filename for filename in filenames if 'timestamp_and_netProfit' in filename][0]
+
+            # read dictionary from json with net profits
+            if folder == 'pipe1_maxTemp' or folder == 'pipe1_minTemp' or folder == 'pureCO2cap':
+                filename = os.path.join(DATA_PATH, '20240429_simulator_A', folder, timestamp_and_netProfit_filename)
+            else:
+                filename = os.path.join(DATA_PATH, folder, timestamp_and_netProfit_filename)
+            
+
+            with open(filename, 'r') as file:
+                timestampNetProfitDict = json.load(file)
+
+            # save timestampNetProfitDict in dataDict with same key as in timestampNetProfitDict (übertrage alle keys) 
+            for key in timestampNetProfitDict.keys():
+                dataDict[key] = timestampNetProfitDict[key]
+
+        # save dataDict as json
+        target_folder = '20240531_simulator_B_final'
+        filename = os.path.join(DATA_PATH, target_folder, 'dataDict.json')
+        with open(filename, 'w') as file:
+            json.dump(dataDict, file, indent=4)
+
+        # get keys and values from dataDict with 100 highest values as dictionary
+        highest_values = dict(sorted(dataDict.items(), key=lambda item: item[1], reverse=True)[:140])
+
+        # save highest_values as json
+        filename = os.path.join(DATA_PATH, target_folder, 'highest_values.json')
+        with open(filename, 'w') as file:
+            json.dump(highest_values, file, indent=4)
+        
+        # load input files from highest_values from all_input_files folder
+        final_folder = 'final_input_files'
+
+        folder_path = os.path.join(DATA_PATH, target_folder, 'all_input_files')
+        filenames = os.listdir(folder_path)
+
+        # for all highest_values get filenames
+        final_filename_list = []
+        for key in highest_values.keys():
+            for filename in filenames:
+                if key in filename:
+                    final_filename_list.append(filename)
+
+        # for all filenames in final_filename_list, load input file, adjust start date and end date, save in final_input_files folder
+        output_filename_list = []
+        for filename in final_filename_list:
+            # load input file
+            input_filename = os.path.join(DATA_PATH, target_folder, 'all_input_files', filename)
+            NewInput = InputData.from_json(input_filename)
+            # adjust start date and end date
+            startDate = "01-01-2021"#"2021-01-01"
+            NewInput.data_dict["simset"]["@startDate"] = startDate
+            NewInput.data_dict["simset"]["@endDate"] = (datetime.strptime(startDate, "%d-%m-%Y") + timedelta(days=70)).strftime("%d-%m-%Y")
+            NewInput.data_dict["simset"]["@meteodata"] = 'Bleiswijk'
+            del NewInput.data_dict["simset"]["@startDate"]
+            del NewInput.data_dict["simset"]["@meteodata"]
+            # save in final_input_files folder
+            output_filename = os.path.join(DATA_PATH, target_folder, final_folder, filename)
+            output_filename_list.append(output_filename)
+            NewInput.write_json(output_filename)
+
+    if run_final:
+
+        # select key
+        url = "https://www.digigreenhouse.wur.nl/AGC2024/model/kaspro"
+        key_A = "SmartToms-A-gl4d-1cam"  # key to simulator A
+        key_B = "SmartToms-B-gl4d-1cam"  # key to simulator B
+        key = key_B
+        if key == key_A:
+            keystr = "A"
+        elif key == key_B:
+            keystr = "B"
+        
+        # simulate
+        finalDict = {}
+        for filename in output_filename_list:
+            print("Simulate:", filename)
+            # load input file
+            #input_filename = os.path.join(DATA_PATH, target_folder, 'all_input_files', filename)
+            input_filename = filename
+            NewInput = InputData.from_json(input_filename)
+            # simulate
+            response = requests.post(url, data={"key": key, "parameters": NewInput.get_data_str()})
+            NewOutput = OutputData.from_response(response)
+            # save net profit in dictionary
+            netprofit = NewOutput.data_dict["stats"]["economics"]["balance"]
+            finalDict[filename] = netprofit
+        
+        # save finalDict as json
+        filename = os.path.join(DATA_PATH, target_folder, 'finalDict.json')
+        with open(filename, 'w') as file:
+            json.dump(finalDict, file, indent=4)
+
+        # print key and value of maximal net profit in finalDict
+        max_key = max(finalDict, key=finalDict.get)
+        # simulate the maximum
+        input_filename = max_key
+        NewInput = InputData.from_json(input_filename)
+        response = requests.post(url, data={"key": key, "parameters": NewInput.get_data_str()})
+        NewOutput = OutputData.from_response(response)
+        netprofit = NewOutput.data_dict["stats"]["economics"]["balance"]
+        print('final maximal net profit is', netprofit)
+
+
+        
+        
